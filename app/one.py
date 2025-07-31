@@ -13,7 +13,7 @@
 #     running = False
 
 # def is_running():
-#     return running
+#     return runni["price", "cost", "amount", "value", "$"]ng
 
 # async def process_all_seeds():
 #     from app.config import seeds, recipients, amount, memo, batch_size
