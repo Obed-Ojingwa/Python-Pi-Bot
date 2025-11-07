@@ -1,4 +1,4 @@
-
+<!-- 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -189,7 +189,234 @@
     }
   </script>
 </body>
+</html> -->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pi Transfer Control</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 20px auto;
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    textarea, input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      margin-bottom: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    button {
+      padding: 10px 18px;
+      margin: 5px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .primary { background: #4CAF50; color: white; }
+    .danger { background: #f44336; color: white; }
+    .secondary { background: #2196F3; color: white; }
+    #response {
+      margin-top: 20px;
+      padding: 12px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      min-height: 50px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <h2>🚀 Pi Transaction Controller</h2>
+
+  <form id="transferForm">
+    <label for="seeds">Seeds (one per line):</label>
+    <textarea id="seeds" name="seeds" rows="5" placeholder="Enter seeds here..."></textarea>
+
+    <label for="destination">Destination:</label>
+    <input type="text" id="destination" name="destination" placeholder="GDSTINATIONADDRESS..." required />
+
+    <label for="amount">Amount:</label>
+    <input type="number" step="0.000001" id="amount" name="amount" required />
+
+    <button type="submit" class="primary">Send Once (/api/transfer)</button>
+  </form>
+
+  <div>
+    <button onclick="callEndpoint('/start')" class="secondary">▶ Start Normal</button>
+    <button onclick="callEndpoint('/stop')" class="danger">⏹ Stop Normal</button>
+    <button onclick="callEndpoint('/start_turbo')" class="secondary">⚡ Start Turbo</button>
+    <button onclick="callEndpoint('/stop_turbo')" class="danger">⏹ Stop Turbo</button>
+  </div>
+
+  <div id="response">Response will appear here...</div>
+
+  <script>
+    const form = document.getElementById("transferForm");
+    const responseDiv = document.getElementById("response");
+  
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+
+      try {
+        const res = await fetch("/api/transfer", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await res.json();
+        responseDiv.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        responseDiv.textContent = "Error: " + err;
+      }
+    });
+
+    async function callEndpoint(endpoint) {
+      const formData = new FormData(form);
+      try {
+        const res = await fetch(endpoint, {
+          method: "POST",
+          body: formData,
+        });
+        const data = await res.json();
+        responseDiv.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        responseDiv.textContent = "Error: " + err;
+      }
+    }
+  </script>
+</body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- app/templates/index.html -->
+<!-- File: app/templates/index.html -->
+<!-- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pi Transaction Bot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    textarea, input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 10px 18px;
+      margin: 6px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      color: #fff;
+    }
+    .start { background: #28a745; }
+    .stop { background: #dc3545; }
+    .turbo { background: #007bff; }
+    .stop-turbo { background: #6f42c1; }
+    #output {
+      margin-top: 15px;
+      padding: 10px;
+      background: #f0f0f0;
+      border-radius: 8px;
+      min-height: 50px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🚀 Pi Transaction Bot</h2>
+
+    <label>Seeds (one per line):</label>
+    <textarea id="seeds" rows="6" placeholder="Enter your seeds here..."></textarea>
+
+    <label>Destination Address:</label>
+    <input id="destination" type="text" placeholder="Enter destination wallet" />
+
+    <label>Amount:</label>
+    <input id="amount" type="number" step="0.000001" placeholder="Enter amount" />
+
+    <div>
+      <button class="start" onclick="sendAction('/start')">Start Continuous</button>
+      <button class="stop" onclick="sendAction('/stop')">Stop Continuous</button>
+    </div>
+    <div>
+      <button class="turbo" onclick="sendAction('/start_turbo')">Start Turbo</button>
+      <button class="stop-turbo" onclick="sendAction('/stop_turbo')">Stop Turbo</button>
+    </div>
+
+    <div id="output">⚡ Status messages will appear here...</div>
+  </div>
+
+  <script>
+    async function sendAction(endpoint) {
+      const seeds = document.getElementById("seeds").value;
+      const destination = document.getElementById("destination").value;
+      const amount = document.getElementById("amount").value;
+
+      const formData = new FormData();
+      formData.append("seeds", seeds);
+      formData.append("destination", destination);
+      formData.append("amount", amount);
+
+      try {
+        const res = await fetch(endpoint, {
+          method: "POST",
+          body: formData
+        });
+        const data = await res.json();
+        document.getElementById("output").innerText = JSON.stringify(data, null, 2);
+      } catch (err) {
+        document.getElementById("output").innerText = "❌ Error: " + err;
+      }
+    }
+  </script>
+</body>
+</html> -->
+
 
 
 

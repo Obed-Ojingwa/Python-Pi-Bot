@@ -7,21 +7,69 @@
 # from bip_utils import Bip39SeedGenerator, Bip32Slip10Ed25519
 # from bip_utils import Bip39SeedGenerator, Bip32Slip10Ed25519, Bip44, Bip44Coins
 
+
+# app/utils.py
+
 from bip_utils import Bip39SeedGenerator, Bip32Slip10Ed25519
 from stellar_sdk import Keypair
 
-def derive_keypair(mnemonic: str) -> Keypair:
-    # Generate the seed from the mnemonic
-    seed_bytes = Bip39SeedGenerator(mnemonic).Generate()
+# Use the Pi derivation path
+COIN_DERIVATION_PATH = "m/44'/314159'/0'"
 
-    # Derive the key using BIP-44 style path for Pi Network (uses Stellar)
-    path = "m/44'/314159'/0'"
+def derive_keypair(mnemonic: str) -> Keypair:
+    """
+    Derive a stellar Keypair from a BIP39 mnemonic using Bip32Slip10Ed25519.
+    Returns `stellar_sdk.Keypair`.
+    """
+    # normalize whitespace
+    mnemonic = " ".join(mnemonic.strip().split())
+    seed_bytes = Bip39SeedGenerator(mnemonic).Generate()
     bip32_ctx = Bip32Slip10Ed25519.FromSeed(seed_bytes)
-    child_key = bip32_ctx.DerivePath(path)
+    child_key = bip32_ctx.DerivePath(COIN_DERIVATION_PATH)
 
     private_key = child_key.PrivateKey().Raw().ToBytes()
     kp = Keypair.from_raw_ed25519_seed(private_key)
-    return kp  
+    return kp
+
+
+# app/utils.py
+
+# from bip_utils import Bip39SeedGenerator, Bip32Slip10Ed25519
+# from stellar_sdk import Keypair
+
+# def derive_keypair(mnemonic: str) -> Keypair:
+#     # Generate the seed from the mnemonic
+#     seed_bytes = Bip39SeedGenerator(mnemonic).Generate()
+
+#     # Derive with Pi’s derivation path
+#     path = "m/44'/314159'/0'"
+#     bip32_ctx = Bip32Slip10Ed25519.FromSeed(seed_bytes)
+#     child_key = bip32_ctx.DerivePath(path)
+
+#     # Convert to Stellar Keypair
+#     private_key = child_key.PrivateKey().Raw().ToBytes()
+#     return Keypair.from_raw_ed25519_seed(private_key)
+
+
+
+
+
+
+# from bip_utils import Bip39SeedGenerator, Bip32Slip10Ed25519
+# from stellar_sdk import Keypair
+
+# def derive_keypair(mnemonic: str) -> Keypair:
+#     # Generate the seed from the mnemonic
+#     seed_bytes = Bip39SeedGenerator(mnemonic).Generate()
+
+#     # Derive the key using BIP-44 style path for Pi Network (uses Stellar)
+#     path = "m/44'/314159'/0'"
+#     bip32_ctx = Bip32Slip10Ed25519.FromSeed(seed_bytes)
+#     child_key = bip32_ctx.DerivePath(path)
+
+#     private_key = child_key.PrivateKey().Raw().ToBytes()
+#     kp = Keypair.from_raw_ed25519_seed(private_key)
+#     return kp  
 
 
 
